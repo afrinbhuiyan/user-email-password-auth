@@ -1,28 +1,77 @@
+import { createUserWithEmailAndPassword } from "firebase/auth/cordova";
+import auth from "../../firebase/firebase";
+import { useState } from "react";
+import { AiOutlineEye } from "react-icons/ai";
+import { AiFillEyeInvisible } from "react-icons/ai";
 
 const Register = () => {
+    const [registerError, setRegisterError] = useState('');
+    const [registerSuccess, setRegisterSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const handleRegister = e => {
         e.preventDefault();
+        // reset error
+        setRegisterError('')
+        setRegisterSuccess('')
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email, password)
+        if (password.length < 6) {
+            setRegisterError('Password should be at least 6 characters or longer');
+            return;
+        }
+        else if (!/[A-Z]/.test(password)) {
+            setRegisterError('Your Password should have at least and upper case characters');
+            return;
+        }
+        //Create User
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(result => {
+                console.log(result.user)
+                setRegisterSuccess('User Created Successfully')
+            })
+            .catch(error => {
+                console.log(error);
+                setRegisterError(error.message);
+            })
     }
     return (
         <div>
-            <div className="mx-auto md:w-1/2">
+            <div className="mx-auto md:w-1/2 ">
                 <h2 className="text-2xl">Please Register</h2>
-                <form onSubmit={handleRegister} className="bg-white shadow-2xl rounded-lg p-10">
-                    <p class="label-text">Email</p>
-                    <br />
-                    <input className="w-3/4 mb-3 py-3 px-4 rounded-full border border-[#111111c9]" placeholder="Email Address" type="email" name="email" id="" />
-                    <br />
-                    <p class="label-text">Password</p>
-                    <br />
-                    <input className="w-3/4 mb-3 py-3 px-4 rounded-full border border-[#111111c9]" placeholder="password" type="password" name="password" id="" />
-                    <br />
-                    <input className="btn mt-4 bg-blue-400 w-3/4" type="submit" value="register" />
+                <form onSubmit={handleRegister} className="bg-white shadow-2xl rounded-lg p-10 flex flex-col items-center">
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Email</span>
+                        </label>
+                        <input className="pr-96 mb-3 py-3 px-4 rounded-full border border-[#111111c9]"
+                            placeholder="Email Address" type="email" name="email" id="" required />
+                    </div>
+                    <div>
+                        <label className="label-text">
+                            <span className="label-text">Password</span></label>
+                        <br />
+                        <label className="input input-bordered flex items-center gap-2 border rounded-full">
+                        <input className="pr-96  py-3 px-4 "
+                            placeholder="password" type={showPassword ? "text" : "password"}
+                            name="password" id="" required />
+                        <span onClick={() => setShowPassword(!showPassword)} >
+                            {
+                                showPassword ? <AiFillEyeInvisible></AiFillEyeInvisible> : <AiOutlineEye></AiOutlineEye>
+                            }
+                        </span>
+                        </label>
+                    </div>
+                    <input className="btn mt-4 bg-blue-400 px-[270px]" type="submit" value="register" />
+
+                    {
+                        registerError && <p className="text-[#f03333] font-semibold pt-3">{registerError}</p>
+                    }
+                    {
+                        registerSuccess && <p className="text-[#3da024] font-semibold pt-3" >{registerSuccess}</p>
+                    }
                 </form>
             </div>
-            
         </div>
     );
 };
