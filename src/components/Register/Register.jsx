@@ -15,13 +15,18 @@ const Register = () => {
         setRegisterSuccess('')
         const email = e.target.email.value;
         const password = e.target.password.value;
-        console.log(email, password)
+        const accepted = e.target.terms.checked
+        console.log(email, password, accepted)
         if (password.length < 6) {
             setRegisterError('Password should be at least 6 characters or longer');
             return;
         }
         else if (!/[A-Z]/.test(password)) {
             setRegisterError('Your Password should have at least and upper case characters');
+            return;
+        }
+        else if(!accepted){
+            setRegisterError('Please accept our terms and conditions!!')
             return;
         }
         //Create User
@@ -44,15 +49,15 @@ const Register = () => {
                         <label className="label">
                             <span className="label-text">Email</span>
                         </label>
-                        <input className="pr-96 mb-3 py-3 px-4 rounded-full border border-[#111111c9]"
+                        <input className="pr-96 mb-3 py-3 px-4 rounded-full border input-bordered"
                             placeholder="Email Address" type="email" name="email" id="" required />
                     </div>
-                    <div>
+                    <div className="mb-5">
                         <label className="label-text">
-                            <span className="label-text">Password</span></label>
+                            <span className="label-text ">Password</span></label>
                         <br />
                         <label className="input input-bordered flex items-center gap-2 border rounded-full">
-                        <input className="pr-96  py-3 px-4 "
+                        <input className="pr-80  py-3 px-4"
                             placeholder="password" type={showPassword ? "text" : "password"}
                             name="password" id="" required />
                         <span onClick={() => setShowPassword(!showPassword)} >
@@ -62,8 +67,13 @@ const Register = () => {
                         </span>
                         </label>
                     </div>
+                    <div className="">
+                    <input className="mr-2" type="checkbox" name="terms" id="terms" />
+                    <label htmlFor="terms">Accept our <a href="">Terms and Conditions</a></label>
+                    <br />
                     <input className="btn mt-4 bg-blue-400 px-[270px]" type="submit" value="register" />
 
+                    </div>
                     {
                         registerError && <p className="text-[#f03333] font-semibold pt-3">{registerError}</p>
                     }
