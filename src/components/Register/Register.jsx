@@ -3,6 +3,7 @@ import auth from "../../firebase/firebase";
 import { useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const [registerError, setRegisterError] = useState('');
@@ -10,7 +11,7 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const handleRegister = e => {
         e.preventDefault();
-        // reset error
+        // reset error and success
         setRegisterError('')
         setRegisterSuccess('')
         const email = e.target.email.value;
@@ -42,9 +43,9 @@ const Register = () => {
     }
     return (
         <div>
-            <div className="mx-auto md:w-1/2 ">
-                <h2 className="text-2xl">Please Register</h2>
-                <form onSubmit={handleRegister} className="bg-white shadow-2xl rounded-lg p-10 flex flex-col items-center">
+            <div className="mx-auto md:w-1/2 flex flex-col justify-center items-center mt-40">
+                <h2 className="text-2xl mb-10">Please Register</h2>
+                <form onSubmit={handleRegister} className="bg-white shadow-2xl rounded-lg p-10 ">
                     <div className="form-control">
                         <label className="label">
                             <span className="label-text">Email</span>
@@ -58,7 +59,7 @@ const Register = () => {
                         <br />
                         <label className="input input-bordered flex items-center gap-2 border rounded-full">
                         <input className="pr-80  py-3 px-4"
-                            placeholder="password" type={showPassword ? "text" : "password"}
+                            placeholder="Password" type={showPassword ? "text" : "password"}
                             name="password" id="" required />
                         <span onClick={() => setShowPassword(!showPassword)} >
                             {
@@ -69,7 +70,7 @@ const Register = () => {
                     </div>
                     <div className="">
                     <input className="mr-2" type="checkbox" name="terms" id="terms" />
-                    <label htmlFor="terms">Accept our <a href="">Terms and Conditions</a></label>
+                    <small><label htmlFor="terms">Accept our <a href="">Terms and Conditions</a></label></small>
                     <br />
                     <input className="btn mt-4 bg-blue-400 px-[270px]" type="submit" value="register" />
 
@@ -80,6 +81,10 @@ const Register = () => {
                     {
                         registerSuccess && <p className="text-[#3da024] font-semibold pt-3" >{registerSuccess}</p>
                     }
+
+                    <p className="mt-2"><small>Already have an account? Please <Link to={'/login'} ><a 
+                    className="underline font-medium hover:text-blue-500"> Login </a></Link> </small></p>
+
                 </form>
             </div>
         </div>

@@ -1,19 +1,55 @@
-import { signInWithEmailAndPassword } from "firebase/auth/cordova";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth/cordova";
 import auth from "../../firebase/firebase";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useRef } from "react";
 
 const Login = () => {
+
+    const [loginError, setLoginError] = useState('');
+    const [loginSuccess, setLoginSuccess] = useState('');
+    const emailRef = useRef(null);
+
     const handleLogin = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email, password)
+        // reset error and success
+        setLoginError('')
+        setLoginSuccess('')
         // add validation
         signInWithEmailAndPassword(auth, email, password)
-        .then(result => {
-            console.log(result.user)
-        })
-        .catch(error => console.error(error))
+            .then(result => {
+                console.log(result.user);
+                setLoginSuccess('User Logged In Successfully')
+            })
+            .catch(error => {
+                console.error(error)
+                setLoginError(error.message);
+            })
     }
+
+    const handleForgerPassword = () => {
+        const email = emailRef.current.value;
+        if(!email){
+            console.log('Please Provide an email', emailRef.current.value)
+            return;
+        }
+        else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            console.log('Please write a valid email')
+            return;
+        }
+        // send validation email
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+            alert('Please check your email')
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }
+
     return (
         <div className="hero bg-base-200 py-20">
             <div className="hero-content flex-col lg:flex-row-reverse">
@@ -30,7 +66,7 @@ const Login = () => {
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
-                            <input type="email" placeholder="email" name="email" className="input input-bordered" required />
+                            <input type="email" placeholder="email" name="email" ref={emailRef} className="input input-bordered" required />
                         </div>
                         <div className="form-control">
                             <label className="label">
@@ -38,11 +74,24 @@ const Login = () => {
                             </label>
                             <input type="password" placeholder="password" name="password" className="input input-bordered" required />
                             <label className="label">
-                                <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                                <a onClick={handleForgerPassword} href="#" className="label-text-alt link link-hover">Forgot password?</a>
                             </label>
                         </div>
                         <div className="form-control mt-6">
-                            <button className="btn btn-primary">Login</button>
+                            <button className="btn bg-blue-400 text-white hover:shadow-xl hover:shadow-[#87b3e6] hover:bg-blue-300">Login</button>
+                        </div>
+                        <div>
+
+                            {
+                                loginError && <p className="text-[#f03333] font-semibold pt-3">{loginError}</p>
+                            }
+                            {
+                                loginSuccess && <p className="text-[#3da024] font-semibold pt-3" >{loginSuccess}</p>
+                            }
+
+                            <p><small>New to this website? Please <Link to={'/register'} ><a href="" 
+                            className="underline font-medium hover:text-blue-500" >Register</a></Link> </small></p>
+
                         </div>
                     </form>
                 </div>
